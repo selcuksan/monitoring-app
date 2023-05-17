@@ -1,0 +1,33 @@
+version: "3"
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    command: --config.file=/etc/prometheus/prometheus.yaml
+    volumes:
+      - /home/bb/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    networks:
+      - monitoring
+  node-exporter:
+    container_name: node-exporter
+    image: quay.io/prometheus/node-exporter:latest
+    ports:
+      - 9100:9100
+    restart: always
+    networks:
+      - monitoring
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:8.4.5
+    ports:
+      - 3000:3000
+    environment:
+      - "GF_DEFAULT_APP_MODE=development"
+      - "GF_LOG_LEVEL=debug"
+    networks:
+      - monitoring
+networks:
+  monitoring:
+    driver: bridge
